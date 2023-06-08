@@ -1,6 +1,45 @@
 const Product = require("../models/Productmodel");
 const { findByIdAndUpdate } = require("../models/usermodel");
 
+exports.addproduct = async (req, res) => {
+  const { name, category, price, quantity } = req.body;
+  const file = req.file.filename;
+  if (!name || !category || !price || !quantity) {
+    res.status(400).send("all fields are compulsory");
+  }
+  try {
+    const newproduct = new Product({
+      name,
+      category,
+      price,
+      quantity,
+      photo: file,
+    });
+    const saveproduct = await newproduct.save();
+    res.status(200).send(saveproduct);
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};
+
+exports.Product = async (req, res) => {
+  try {
+    const products = await Product.find({});
+    res.status(200).send(products);
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};
+
+exports.singleproduct = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const product = await Product.findOne({ _id: id });
+    res.status(200).send(product);
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};
 
 exports.editproduct = async(req,res)=>{
     try {
